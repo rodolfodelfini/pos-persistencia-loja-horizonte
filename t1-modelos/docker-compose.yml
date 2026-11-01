@@ -1,0 +1,43 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: horizonte_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: horizonte_user
+      POSTGRES_PASSWORD: horizonte_password
+      POSTGRES_DB: horizonte_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./sql/01_schema_relacional.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+      - ./sql/02_seed_pedidos_estoque.sql:/docker-entrypoint-initdb.d/02_seed.sql:ro
+      - pgdata:/var/lib/postgresql/data
+
+  mongodb:
+    image: mongo:7.0
+    container_name: horizonte_mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin_password
+      MONGO_INITDB_DATABASE: horizonte_catalogo
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./mongo/seed_catalogo.js:/docker-entrypoint-initdb.d/seed_catalogo.js:ro
+      - mongodata:/data/db
+
+  redis:
+    image: redis:7.2-alpine
+    container_name: horizonte_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+
+volumes:
+  pgdata:
+  mongodata:
+  redisdata:

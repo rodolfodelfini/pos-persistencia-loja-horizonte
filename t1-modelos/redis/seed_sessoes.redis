@@ -1,0 +1,17 @@
+# ==============================================================================
+# Comandos Redis - Gerenciamento de Sessão e Cache (Loja Horizonte)
+# Disciplina: Persistência de Dados e Bancos Distribuídos - Trabalho 1 (T1)
+# ==============================================================================
+
+# 1. Armazenar sessão com expiração automática (TTL de 900 segundos / 15 minutos)
+SET sessao:token_abc_123 "cliente=42;status=ativo;carrinho_itens=2" EX 900
+
+# 2. Recuperar sessão do usuário
+GET sessao:token_abc_123
+
+# 3. Consultar tempo restante de vida da sessão (TTL)
+TTL sessao:token_abc_123
+
+# 4. Cache transitório de contagem de visualizações do produto (Contador atômico)
+INCR metricas:visualizacoes:produto:10
+EXPIRE metricas:visualizacoes:produto:10 3600
